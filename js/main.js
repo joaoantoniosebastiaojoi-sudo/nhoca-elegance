@@ -16,6 +16,14 @@
     const formSuccess = document.getElementById('formSuccess');
 
     // ===== MOBILE MENU TOGGLE =====
+    function closeMobileMenu() {
+        if (nav && menuToggle) {
+            nav.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.innerHTML = '☰';
+        }
+    }
+
     if (menuToggle && nav) {
         menuToggle.addEventListener('click', function () {
             const isOpen = nav.classList.toggle('open');
@@ -27,18 +35,24 @@
         const navLinks = nav.querySelectorAll('.nav-link');
         navLinks.forEach(function (link) {
             link.addEventListener('click', function () {
-                nav.classList.remove('open');
-                menuToggle.setAttribute('aria-expanded', 'false');
-                menuToggle.innerHTML = '☰';
+                closeMobileMenu();
             });
         });
 
         // Close menu when clicking outside
         document.addEventListener('click', function (e) {
             if (!nav.contains(e.target) && !menuToggle.contains(e.target)) {
-                nav.classList.remove('open');
-                menuToggle.setAttribute('aria-expanded', 'false');
-                menuToggle.innerHTML = '☰';
+                closeMobileMenu();
+            }
+        });
+
+        // Close menu with Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+                if (cookieBanner) {
+                    hideCookieBanner();
+                }
             }
         });
     }
@@ -50,14 +64,14 @@
     function updateHeader() {
         const scrollY = window.scrollY;
 
-        if (scrollY > 100) {
-            if (scrollY > lastScrollY) {
-                // Scrolling down - hide header
-                header.classList.add('header--hidden');
-            } else {
-                // Scrolling up - show header
-                header.classList.remove('header--hidden');
-            }
+        if (scrollY <= 100) {
+            header.classList.remove('header--hidden');
+        } else if (scrollY > lastScrollY) {
+            // Scrolling down - hide header
+            header.classList.add('header--hidden');
+        } else {
+            // Scrolling up - show header
+            header.classList.remove('header--hidden');
         }
 
         lastScrollY = scrollY;
